@@ -9,9 +9,9 @@ export default class ArticleList extends Component {
         var renderedArticles = [];
 
         this.props.articles.forEach(article => {
-            let { title, description } = article;
+            let { id, title, description } = article;
             renderedArticles.push(
-                <ArticleLink key={title} title={title} description={description} />
+                <ArticleLink key={id} title={title} description={description} />
             );
         });
 
