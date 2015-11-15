@@ -4,6 +4,7 @@
   "ecmaFeatures": {
     "binaryLiterals": true,                    // enable binary literals
     "classes": true,
+    "modules": true,
     "blockBindings": true,                     // enable let and const (aka block bindings)
     "defaultParams": true,                     // enable default function parameters
     "forOf": true,                             // enable for-of loops
