@@ -2,6 +2,8 @@
   // http://eslint.org/docs/rules/
 
   "ecmaFeatures": {
+    "arrowFunctions": true,
+    "destructuring": true,
     "binaryLiterals": true,                    // enable binary literals
     "classes": true,
     "modules": true,
