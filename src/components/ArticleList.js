@@ -5,8 +5,6 @@ import ArticleStarButton from './ArticleStarButton';
 import ArticleLink from './ArticleLink';
 import ArticleStore from '../stores/ArticleStore';
 
-import ArticleActions from '../actions/ArticleActions';
-
 export default class ArticleList extends Component {
     _buildStateFromStore() {
         return {
@@ -16,13 +14,11 @@ export default class ArticleList extends Component {
     constructor() {
         super();
         this.state = this._buildStateFromStore();
+
+        // React components using ES6 classes no longer autobind this to non React methods
+        this._onChange = this._onChange.bind(this);
     }
     componentDidMount() {
-        $.getJSON('https://en.wikipedia.org/w/api.php?action=query&format=json&generator=random&grnnamespace=0&grnlimit=10&callback=?',
-            (result) => {
-                console.log(result.query.pages);
-            });
-
         ArticleStore.onChangeSignal.add(this._onChange);
     }
     componentWillUnmount() {
@@ -34,10 +30,10 @@ export default class ArticleList extends Component {
     render() {
         var renderedArticles = [];
 
-        this.props.articles.forEach(article => {
+        this.state.articles.forEach(article => {
             let { id, title, description } = article;
             renderedArticles.push(
-                <ArticleLink key={id} id={id} title={title} description={description} />
+                <ArticleLink key={id} id={id} title={title} description={description} articles={this.state.articles}/>
             );
         });
 

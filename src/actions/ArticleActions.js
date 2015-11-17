@@ -2,11 +2,18 @@
 import Dispatcher from '../core/Dispatcher';
 
 export default {
-    add({title, description}) {
+    add({id, title}) {
         Dispatcher.dispatch({
-          type: 'ARTICLE_ADD',
-          title,
-          description
+            type: 'ARTICLE_ADD',
+            id,
+            title
+        });
+    },
+    load({id, description}) {
+        Dispatcher.dispatch({
+            type: 'ARTICLE_LOAD',
+            id,
+            description
         });
     }
 }

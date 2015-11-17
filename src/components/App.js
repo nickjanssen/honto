@@ -1,15 +1,16 @@
 
 import { Component } from 'react';
 
-import ArticleList from './ArticleList';
-import { articles } from '../core/Articles'
+import ArticleStore from '../stores/ArticleStore';
 
 export default class App extends Component {
+    componentDidMount() {
+        ArticleStore.load();
+    }
     render() {
         return (
             <div>
                 <h1>Honto</h1>
-                <ArticleList articles={articles} />
                 {this.props.children}
             </div>
         );
