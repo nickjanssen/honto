@@ -35,6 +35,13 @@ export default class ArticleDetails extends Component {
     _onChange() {
         this.setState(this._buildStateFromStore());
     }
+    getSanitizedWikiContent(description) {
+        // We trust Wikipedia though
+        // https://facebook.github.io/react/tips/dangerously-set-inner-html.html
+        return {
+            __html: description
+        }
+    }
     render() {
 
         let articles = ArticleStore.getAll();
@@ -47,8 +54,8 @@ export default class ArticleDetails extends Component {
 
         return (
             <div>
-                <p>Details {title}</p>
-                <p>{description}</p>
+                <h2>{title}</h2>
+                <div dangerouslySetInnerHTML={this.getSanitizedWikiContent(description)}></div>
             </div>
         );
     }
