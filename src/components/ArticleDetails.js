@@ -21,9 +21,9 @@ export default class ArticleDetails extends Component {
         $.getJSON(`https://en.wikipedia.org/w/api.php?action=query&format=json&prop=revisions&rvprop=content&rvparse&rvsection=0&pageids=${id}&callback=?`,
             (result) => {
                 let content = result.query.pages[id].revisions[0]['*'];
-                ArticleActions.load({
+                ArticleActions.loadContent({
                     id: id,
-                    description: content
+                    content: content
                 });
             });
 
@@ -35,25 +35,25 @@ export default class ArticleDetails extends Component {
     _onChange() {
         this.setState(this._buildStateFromStore());
     }
-    getSanitizedWikiContent(description) {
+    getSanitizedWikiContent(content) {
         // We trust Wikipedia though
         // https://facebook.github.io/react/tips/dangerously-set-inner-html.html
 
         // Convert hrefs so they refer to Wikipedia's domain
         // and add a target="_blank" so links open in a new window
-        if (description) {
-            description = description.replace(/href="\/wiki/g, "target=\"_blank\" href=\"https://en.wikipedia.org/wiki");
+        if (content) {
+            content = content.replace(/href="\/wiki/g, "target=\"_blank\" href=\"https://en.wikipedia.org/wiki");
         }
 
         return {
-            __html: description
+            __html: content
         }
     }
     render() {
 
         let articles = ArticleStore.getAll();
 
-        let { title, description } = articles.find((a) => {
+        let { title, content } = articles.find((a) => {
             if (a.id === parseInt(this.props.params.articleId)) {
                 return a;
             }
@@ -62,7 +62,7 @@ export default class ArticleDetails extends Component {
         return (
             <div>
                 <h2>{title}</h2>
-                <div dangerouslySetInnerHTML={this.getSanitizedWikiContent(description)}></div>
+                <div dangerouslySetInnerHTML={this.getSanitizedWikiContent(content)}></div>
             </div>
         );
     }

@@ -16,7 +16,6 @@ export default class Routes extends Component {
                     <Route path="details/:articleId" component={ArticleDetails}/>
                     {/* <Route path="starred" component={StarredArticles}/> */}
                 </Route>
-
             </Router>
         );
     }
