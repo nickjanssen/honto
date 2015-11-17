@@ -38,6 +38,13 @@ export default class ArticleDetails extends Component {
     getSanitizedWikiContent(description) {
         // We trust Wikipedia though
         // https://facebook.github.io/react/tips/dangerously-set-inner-html.html
+
+        // Convert hrefs so they refer to Wikipedia's domain
+        // and add a target="_blank" so links open in a new window
+        if (description) {
+            description = description.replace(/href="\/wiki/g, "target=\"_blank\" href=\"https://en.wikipedia.org/wiki");
+        }
+
         return {
             __html: description
         }
