@@ -3,6 +3,8 @@ import { Component } from 'react';
 
 import ArticleStore from '../stores/ArticleStore';
 
+require('./App.less');
+
 export default class App extends Component {
     componentDidMount() {
         ArticleStore.load();
