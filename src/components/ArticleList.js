@@ -47,7 +47,6 @@ export default class ArticleList extends Component {
 
         return (
             <div>
-                {this.props.starred ? 'Starred' : 'Not starred'}
                 {renderedArticles}
             </div>
         );
