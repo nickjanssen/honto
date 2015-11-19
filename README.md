@@ -12,19 +12,8 @@ Honto is your new companion to learn more about the world through Wikipedia, wit
 * Works on any device
 * Star articles for later reference
 
-## Architecture
+## How to run
 
-* HontoApp
+This project uses [Webpack](http://webpack.github.io/docs/tutorials/getting-started/). Please make sure you have Webpack installed.
 
-** ArticleList
-*** ArticleStarButton
-*** ArticleTitleLink
-** ArticleDetails
-*** BackToArticleListButton
-*** ArticleTitle
-*** ArticleStarButton
-*** ArticleImage
-*** ArticleDescription
-** StarredArticlesList
-*** ArticleStarButton
-*** ArticleTitleLink
+Run `npm install` and finally `npm start`. Then open `http://localhost:8080`.
