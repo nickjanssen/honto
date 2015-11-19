@@ -6,6 +6,8 @@ import ArticleStore from '../stores/ArticleStore';
 import { Router, Route, Link, IndexLink } from 'react-router'
 
 const ACTIVE = { color: 'red' }
+
+require('../lib/font-awesome-4.4.0/css/font-awesome.css');
 require('./App.less');
 
 export default class App extends Component {
