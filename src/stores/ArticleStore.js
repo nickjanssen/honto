@@ -16,15 +16,28 @@ class ArticleStore {
 
         let isExpired = false;
 
+        // If we have anything stored locally, load it
         if (storageObject) {
-            // Make sure it's not expired
             let parsedObject = JSON.parse(storageObject);
+            let articlesToBeLoaded = [];
+
+            parsedObject.articles.forEach(({id, title}) => {
+                articlesToBeLoaded.push({
+                    id,
+                    title
+                });
+            })
+
+            // Check if we need to pull new articles
             if (parsedObject.lastPull < new Date().getTime() - 10000) {
                 isExpired = true;
             }
+
+            ArticleActions.loadList(articlesToBeLoaded);
         }
 
         if (!storageObject || isExpired) {
+
             $.getJSON('https://en.wikipedia.org/w/api.php?action=query&format=json&generator=random&grnnamespace=0&grnlimit=10&callback=?',
                 (result) => {
                     let pages = result.query.pages;
@@ -43,19 +56,7 @@ class ArticleStore {
                     this.save();
                 });
         }
-        else {
-            let storedArticles = JSON.parse(storageObject);
-            let articlesToBeLoaded = [];
 
-            storedArticles.articles.forEach(({id, title}) => {
-                articlesToBeLoaded.push({
-                    id,
-                    title
-                });
-            })
-
-            ArticleActions.loadList(articlesToBeLoaded);
-        }
     }
     save() {
         // Put the object into storage
@@ -74,12 +75,20 @@ const articleStore = new ArticleStore();
 Dispatcher.register(({type, id, articles, content}) => {
     switch (type) {
         case 'ARTICLE_LOADLIST':
-            articles.forEach(({id, title}) => {
+
+            // First remove the unstarred ones
+            _articles = _articles.filter((article) => {
+                 return article.starred === true
+            });
+
+            articles.forEach(({id, title, starred}) => {
                 _articles.push({
                     id,
-                    title
+                    title,
+                    starred: starred ? true : false
                 });
             });
+
             articleStore.onChangeSignal.dispatch();
         break;
         case 'ARTICLE_LOADCONTENT':
@@ -88,6 +97,7 @@ Dispatcher.register(({type, id, articles, content}) => {
                     a.content = content;
                 }
             });
+
             articleStore.onChangeSignal.dispatch();
         break;
     };
