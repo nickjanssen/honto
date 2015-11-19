@@ -11,29 +11,29 @@ class ArticleStore {
         this.onChangeSignal = new Signal();
     }
     load() {
-        // Retrieve the object from storage
-        let storageObject = localStorage.getItem('hontoStorage');
-
         let isExpired = false;
+
+        let storageObject = localStorage.getItem('hontoStorage');
 
         // If we have anything stored locally, load it
         if (storageObject) {
             let parsedObject = JSON.parse(storageObject);
             let articlesToBeLoaded = [];
 
-            parsedObject.articles.forEach(({id, title}) => {
+            parsedObject.articles.forEach(({id, title, starred}) => {
                 articlesToBeLoaded.push({
                     id,
-                    title
+                    title,
+                    starred
                 });
             })
 
+            ArticleActions.loadList(articlesToBeLoaded);
+
             // Check if we need to pull new articles
-            if (parsedObject.lastPull < new Date().getTime() - 10000) {
+            if (parsedObject.lastPullTime < new Date().getTime() - 10000) {
                 isExpired = true;
             }
-
-            ArticleActions.loadList(articlesToBeLoaded);
         }
 
         if (!storageObject || isExpired) {
@@ -53,20 +53,27 @@ class ArticleStore {
 
                     ArticleActions.loadList(articlesToBeLoaded);
 
-                    this.save();
+                    this.save({ updateLastPullTime: true });
                 });
         }
 
     }
-    save() {
+    save({ updateLastPullTime }) {
+        let storageObject = localStorage.getItem('hontoStorage');
+
         // Put the object into storage
-        localStorage.setItem('hontoStorage', JSON.stringify({
-            lastPull: new Date().getTime(),
-            articles: _articles
-        }));
+        let serializedStorageObject = storageObject ? JSON.parse(storageObject) : {};
+
+        if (updateLastPullTime) {
+            serializedStorageObject.lastPullTime = new Date().getTime();
+        }
+
+        serializedStorageObject.articles = _articles;
+
+        localStorage.setItem('hontoStorage', JSON.stringify(serializedStorageObject));
     }
     getAll() {
-        return _articles
+        return _articles;
     }
 }
 
@@ -97,6 +104,28 @@ Dispatcher.register(({type, id, articles, content}) => {
                     a.content = content;
                 }
             });
+
+            articleStore.onChangeSignal.dispatch();
+        break;
+        case 'ARTICLE_STAR':
+            _articles.find((a) => {
+                if (a.id === parseInt(id)) {
+                    a.starred = true;
+                }
+            });
+
+            articleStore.save({ updateLastPullTime: false });
+
+            articleStore.onChangeSignal.dispatch();
+        break;
+        case 'ARTICLE_UNSTAR':
+            _articles.find((a) => {
+                if (a.id === parseInt(id)) {
+                    a.starred = false;
+                }
+            });
+
+            articleStore.save({ updateLastPullTime: false });
 
             articleStore.onChangeSignal.dispatch();
         break;

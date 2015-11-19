@@ -1,5 +1,7 @@
 
 import { Component } from 'react';
+
+import ArticleStar from './ArticleStar';
 import ArticleStore from '../stores/ArticleStore';
 import ArticleActions from '../actions/ArticleActions';
 
@@ -53,7 +55,7 @@ export default class ArticleDetails extends Component {
 
         let articles = ArticleStore.getAll();
 
-        let { title, content } = articles.find((a) => {
+        let { id, starred, title, content } = articles.find((a) => {
             if (a.id === parseInt(this.props.params.articleId)) {
                 return a;
             }
@@ -61,7 +63,7 @@ export default class ArticleDetails extends Component {
 
         return (
             <div>
-                <h2>{title}</h2>
+                <h2><ArticleStar id={id} starred={starred} /> {title}</h2>
                 <div dangerouslySetInnerHTML={this.getSanitizedWikiContent(content)}></div>
             </div>
         );

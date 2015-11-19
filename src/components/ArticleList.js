@@ -3,6 +3,7 @@ import { Component } from 'react';
 
 import ArticleStarButton from './ArticleStarButton';
 import ArticleLink from './ArticleLink';
+import ArticleStar from './ArticleStar';
 import ArticleStore from '../stores/ArticleStore';
 
 require('./ArticleList.less');
@@ -32,15 +33,13 @@ export default class ArticleList extends Component {
     render() {
         var renderedArticles = [];
 
-        this.state.articles.forEach(article => {
+        this.state.articles.forEach((article, index) => {
             let { id, title, content } = article;
             if (article.starred === this.props.starred) {
                 renderedArticles.push(
                     <div key={id}>
-                        <div className="starArticle">
-                            <i className="fa fa-star-o"></i>
-                        </div>
-                        <ArticleLink id={id} title={title} content={content} articles={this.state.articles}/>
+                        <ArticleStar id={id} starred={article.starred} />
+                        <ArticleLink id={id} title={title} content={content}/>
                     </div>
                 );
             }
