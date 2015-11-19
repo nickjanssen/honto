@@ -20,12 +20,21 @@ export default class ArticleList extends Component {
     }
     componentDidMount() {
         ArticleStore.onChangeSignal.add(this._onChange);
+
+        this.setState({loading: true});
+
+        ArticleStore.load({});
     }
     componentWillUnmount() {
         ArticleStore.onChangeSignal.remove(this._onChange);
     }
     _onChange() {
         this.setState(this._buildStateFromStore());
+        this.setState({loading: false});
+    }
+    _flushArticles() {
+        ArticleStore.load({ forceNewArticles: true });
+        this.setState({loading: true});
     }
     render() {
         var renderedArticles = [];
@@ -41,10 +50,23 @@ export default class ArticleList extends Component {
                 );
             }
         });
+        let loadingSpinner = this.state.loading ? (<i className="fa fa-spin fa-refresh fa-spacer"></i>) : '';
+        let getFreshArticlesLink = null;
+        if (!this.props.starred) {
+            getFreshArticlesLink = (
+                <div>
+                    <a href="#" onClick={this._flushArticles.bind(this)}>Get fresh articles</a>
+                    {loadingSpinner}
+                </div>
+            );
+        }
 
         return (
             <div>
-                {renderedArticles}
+                {getFreshArticlesLink}
+                <div className="articles">
+                    {renderedArticles}
+                </div>
             </div>
         );
     }

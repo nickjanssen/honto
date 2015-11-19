@@ -10,8 +10,8 @@ class ArticleStore {
     constructor() {
         this.onChangeSignal = new Signal();
     }
-    load() {
-        let isExpired = false;
+    load({ forceNewArticles }) {
+        let isExpired = forceNewArticles || false;
 
         let storageObject = localStorage.getItem('hontoStorage');
 
@@ -47,7 +47,8 @@ class ArticleStore {
                         let page = pages[key];
                         articlesToBeLoaded.push({
                             id: page.pageid,
-                            title: page.title
+                            title: page.title,
+                            starred: false
                         });
                     });
 
