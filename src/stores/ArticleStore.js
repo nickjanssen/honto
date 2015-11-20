@@ -31,7 +31,7 @@ class ArticleStore {
             ArticleActions.loadList(articlesToBeLoaded);
 
             // Check if we need to pull new articles
-            if (parsedObject.lastPullTime < new Date().getTime() - 10000) {
+            if (parsedObject.lastPullTime < new Date().getTime() - 30000) {
                 isExpired = true;
             }
         }

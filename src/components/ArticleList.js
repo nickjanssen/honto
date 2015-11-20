@@ -6,8 +6,6 @@ import ArticleLink from './ArticleLink';
 import ArticleStar from './ArticleStar';
 import ArticleStore from '../stores/ArticleStore';
 
-require('./ArticleList.less');
-
 export default class ArticleList extends Component {
     _buildStateFromStore() {
         return {
