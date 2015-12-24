@@ -1,7 +1,7 @@
 {
   "name": "Honto",
   "scripts": {
-    "start": "webpack-dev-server --progress --colors --inline"
+    "start": "webpack-dev-server --progress --colors --inline --history-api-fallback"
   },
   "version": "1.0.0",
   "description": "Learn 10 new facts every day!",
