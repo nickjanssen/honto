@@ -22,9 +22,11 @@ export default class ArticleDetails extends Component {
         var id = this.props.params.articleId;
         $.getJSON(`https://en.wikipedia.org/w/api.php?action=query&format=json&prop=revisions&rvprop=content&rvparse&rvsection=0&pageids=${id}&callback=?`,
             (result) => {
-                let content = result.query.pages[id].revisions[0]['*'];
-                ArticleActions.loadContent({
+                let page = result.query.pages[id];
+                let content = page.revisions[0]['*'];
+                ArticleActions.loadArticleWithContent({
                     id: id,
+                    title: page.title,
                     content: content
                 });
             });
@@ -55,17 +57,26 @@ export default class ArticleDetails extends Component {
 
         let articles = ArticleStore.getAll();
 
-        let { id, starred, title, content } = articles.find((a) => {
+        let foundArticle = articles.find((a) => {
             if (a.id === parseInt(this.props.params.articleId)) {
                 return a;
             }
-        })
+        });
 
-        return (
-            <div>
-                <h2><ArticleStar id={id} starred={starred} /> {title}</h2>
-                <div dangerouslySetInnerHTML={this.getSanitizedWikiContent(content)}></div>
-            </div>
-        );
+        if (foundArticle) {
+            let { id, starred, title, content } = foundArticle;
+
+            return (
+                <div>
+                    <h2><ArticleStar id={id} starred={starred} /> {title}</h2>
+                    <div dangerouslySetInnerHTML={this.getSanitizedWikiContent(content)}></div>
+                </div>
+            );
+        }
+        else {
+            return (
+                <div>Loading    </div>
+            );
+        }
     }
 }

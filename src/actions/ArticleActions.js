@@ -20,11 +20,12 @@ export default {
             id
         });
     },
-    loadContent({id, content}) {
+    loadArticleWithContent({id, content, title}) {
         Dispatcher.dispatch({
-            type: 'ARTICLE_LOADCONTENT',
+            type: 'ARTICLE_LOADARTICLEWITHCONTENT',
             id,
-            content
+            content,
+            title
         });
     }
 }

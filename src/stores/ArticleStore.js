@@ -79,7 +79,7 @@ class ArticleStore {
 
 const articleStore = new ArticleStore();
 
-Dispatcher.register(({type, id, articles, content}) => {
+Dispatcher.register(({type, id, articles, content, title}) => {
     switch (type) {
         case 'ARTICLE_LOADLIST':
 
@@ -98,12 +98,23 @@ Dispatcher.register(({type, id, articles, content}) => {
 
             articleStore.onChangeSignal.dispatch();
         break;
-        case 'ARTICLE_LOADCONTENT':
-            _articles.find((a) => {
-                if (a.id === parseInt(id)) {
-                    a.content = content;
-                }
+        case 'ARTICLE_LOADARTICLEWITHCONTENT':
+            let article = _articles.find((a) => {
+                return a.id === parseInt(id);
             });
+
+            // We either provide details to an existing article in the list
+            // or we push one if it doesn't exist yet, in the case
+            // someone tries to load an article with an ID after the list
+            // was reset to 10 new articles.
+
+            if (!article) {
+                article = { id: parseInt(id) };
+                _articles.push(article);
+            }
+
+            article.title = title;
+            article.content = content;
 
             articleStore.onChangeSignal.dispatch();
         break;
