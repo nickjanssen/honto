@@ -1,7 +1,6 @@
 
 import { Component } from 'react';
 
-import ArticleStarButton from './ArticleStarButton';
 import ArticleLink from './ArticleLink';
 import ArticleStar from './ArticleStar';
 import ArticleStore from '../stores/ArticleStore';
