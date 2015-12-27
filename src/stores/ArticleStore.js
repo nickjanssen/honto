@@ -24,6 +24,9 @@ class ArticleStore {
 
         localStorage.setItem('hontoStorage', JSON.stringify(serializedStorageObject));
     }
+    getLastPullTime() {
+        return _lastPullTime;
+    }
     getAll() {
         return _articles;
     }

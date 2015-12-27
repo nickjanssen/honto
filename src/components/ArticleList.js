@@ -52,13 +52,30 @@ export default class ArticleList extends Component {
                 );
             }
         });
+
+        let now = new Date();
+        let lastPullTime = ArticleStore.getLastPullTime();
+        let waitMessage;
+        let secondsPast = ((lastPullTime + 86400 * 1000) - now.getTime()) / 1000;
+
+        if (secondsPast < 60) {
+            waitMessage = parseInt(secondsPast) + ' seconds';
+        }
+        else if (secondsPast < 3600) {
+            waitMessage = parseInt(secondsPast / 60) + ' minutes';
+        }
+        else if (secondsPast <= 86400) {
+            waitMessage = parseInt(secondsPast / 3600) + ' hours';
+        }
+
         let loadingSpinner = this.state.loading ? (<i className="fa fa-spin fa-refresh fa-spacer"></i>) : '';
         let getFreshArticlesLink = null;
         if (!this.props.starred) {
             getFreshArticlesLink = (
                 <div>
-                    <a href="#" onClick={this._getNewArticles.bind(this)}>Get fresh articles</a>
-                    {loadingSpinner}
+                    <p>10 new articles will be shown in {waitMessage}.&nbsp;
+                    <a href="#" onClick={this._getNewArticles.bind(this)}>Show me now</a>
+                    {loadingSpinner}</p>
                 </div>
             );
         }
