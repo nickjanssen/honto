@@ -2,7 +2,7 @@
 import Dispatcher from '../core/Dispatcher';
 import Signal from 'signals';
 
-import ArticleActions from '../actions/ArticleActions';
+import ArticleActionCreators from '../actions/ArticleActionCreators';
 
 let _articles = [];
 
@@ -28,7 +28,7 @@ class ArticleStore {
                 });
             })
 
-            ArticleActions.loadList(articlesToBeLoaded);
+            ArticleActionCreators.loadList(articlesToBeLoaded);
 
             // Check if we need to pull new articles
             if (parsedObject.lastPullTime < new Date().getTime() - 30000) {
@@ -52,7 +52,7 @@ class ArticleStore {
                         });
                     });
 
-                    ArticleActions.loadList(articlesToBeLoaded);
+                    ArticleActionCreators.loadList(articlesToBeLoaded);
 
                     this.save({ updateLastPullTime: true });
                 });

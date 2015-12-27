@@ -2,17 +2,17 @@
 import { Component } from 'react';
 
 import { Link } from 'react-router'
-import ArticleActions from '../actions/ArticleActions';
+import ArticleActionCreators from '../actions/ArticleActionCreators';
 
 require('./ArticleStar.less');
 
 export default class ArticleStar extends Component {
     handleClick() {
         if (this.props.starred) {
-            ArticleActions.unstar(this.props.id);
+            ArticleActionCreators.unstar(this.props.id);
         }
         else {
-            ArticleActions.star(this.props.id);
+            ArticleActionCreators.star(this.props.id);
         }
     }
     render() {

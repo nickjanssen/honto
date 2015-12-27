@@ -3,7 +3,7 @@ import { Component } from 'react';
 
 import ArticleStar from './ArticleStar';
 import ArticleStore from '../stores/ArticleStore';
-import ArticleActions from '../actions/ArticleActions';
+import ArticleActionCreators from '../actions/ArticleActionCreators';
 
 export default class ArticleDetails extends Component {
     constructor() {
@@ -24,7 +24,7 @@ export default class ArticleDetails extends Component {
             (result) => {
                 let page = result.query.pages[id];
                 let content = page.revisions[0]['*'];
-                ArticleActions.loadArticleWithContent({
+                ArticleActionCreators.loadArticleWithContent({
                     id: id,
                     title: page.title,
                     content: content
