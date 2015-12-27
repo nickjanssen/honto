@@ -3,10 +3,17 @@ import { Component } from 'react';
 
 import { Router, Route, Link, IndexLink } from 'react-router'
 
+import ArticleActionCreators from '../actions/ArticleActionCreators';
+
 require('../lib/font-awesome-4.4.0/css/font-awesome.css');
 require('./App.less');
 
 export default class App extends Component {
+    constructor() {
+        super();
+
+        ArticleActionCreators.loadFromStorage();
+    }
     render() {
 
         return (

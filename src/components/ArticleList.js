@@ -4,6 +4,7 @@ import { Component } from 'react';
 import ArticleLink from './ArticleLink';
 import ArticleStar from './ArticleStar';
 import ArticleStore from '../stores/ArticleStore';
+import ArticleActionCreators from '../actions/ArticleActionCreators';
 
 export default class ArticleList extends Component {
     _buildStateFromStore() {
@@ -20,20 +21,19 @@ export default class ArticleList extends Component {
     }
     componentDidMount() {
         ArticleStore.onChangeSignal.add(this._onChange);
-
-        this.setState({loading: true});
-
-        ArticleStore.load({});
     }
     componentWillUnmount() {
         ArticleStore.onChangeSignal.remove(this._onChange);
     }
     _onChange() {
-        this.setState(this._buildStateFromStore());
+        let storeState = this._buildStateFromStore();
+        this.setState(storeState);
+
         this.setState({loading: false});
     }
-    _flushArticles() {
-        ArticleStore.load({ forceNewArticles: true });
+    _getNewArticles() {
+        ArticleActionCreators.getNewArticles();
+
         this.setState({loading: true});
     }
     render() {
@@ -55,7 +55,7 @@ export default class ArticleList extends Component {
         if (!this.props.starred) {
             getFreshArticlesLink = (
                 <div>
-                    <a href="#" onClick={this._flushArticles.bind(this)}>Get fresh articles</a>
+                    <a href="#" onClick={this._getNewArticles.bind(this)}>Get fresh articles</a>
                     {loadingSpinner}
                 </div>
             );

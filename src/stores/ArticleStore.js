@@ -5,71 +5,22 @@ import Signal from 'signals';
 import ArticleActionCreators from '../actions/ArticleActionCreators';
 
 let _articles = [];
+let _lastPullTime = 0;
 
 class ArticleStore {
     constructor() {
         this.onChangeSignal = new Signal();
+
+        this.onChangeSignal.add(this.saveToStorage);
     }
-    load({ forceNewArticles }) {
-        let isExpired = forceNewArticles || false;
-
-        let storageObject = localStorage.getItem('hontoStorage');
-
-        // If we have anything stored locally, load it
-        if (storageObject) {
-            let parsedObject = JSON.parse(storageObject);
-            let articlesToBeLoaded = [];
-
-            parsedObject.articles.forEach(({id, title, starred}) => {
-                articlesToBeLoaded.push({
-                    id,
-                    title,
-                    starred
-                });
-            })
-
-            ArticleActionCreators.loadList(articlesToBeLoaded);
-
-            // Check if we need to pull new articles
-            if (parsedObject.lastPullTime < new Date().getTime() - 30000) {
-                isExpired = true;
-            }
-        }
-
-        if (!storageObject || isExpired) {
-
-            $.getJSON('https://en.wikipedia.org/w/api.php?action=query&format=json&generator=random&grnnamespace=0&grnlimit=10&callback=?',
-                (result) => {
-                    let pages = result.query.pages;
-                    let articlesToBeLoaded = [];
-
-                    Object.keys(pages).forEach((key) => {
-                        let page = pages[key];
-                        articlesToBeLoaded.push({
-                            id: page.pageid,
-                            title: page.title,
-                            starred: false
-                        });
-                    });
-
-                    ArticleActionCreators.loadList(articlesToBeLoaded);
-
-                    this.save({ updateLastPullTime: true });
-                });
-        }
-
-    }
-    save({ updateLastPullTime }) {
+    saveToStorage() {
         let storageObject = localStorage.getItem('hontoStorage');
 
         // Put the object into storage
         let serializedStorageObject = storageObject ? JSON.parse(storageObject) : {};
 
-        if (updateLastPullTime) {
-            serializedStorageObject.lastPullTime = new Date().getTime();
-        }
-
         serializedStorageObject.articles = _articles;
+        serializedStorageObject.lastPullTime = _lastPullTime;
 
         localStorage.setItem('hontoStorage', JSON.stringify(serializedStorageObject));
     }
@@ -80,14 +31,10 @@ class ArticleStore {
 
 const articleStore = new ArticleStore();
 
-Dispatcher.register(({type, id, articles, content, title}) => {
+Dispatcher.register(({type, id, articles, content, title, lastPullTime}) => {
     switch (type) {
-        case 'ARTICLE_LOADLIST':
-
-            // First remove the unstarred ones
-            _articles = _articles.filter((article) => {
-                 return article.starred === true
-            });
+        case 'ARTICLE_SETARTICLES':
+            _articles = [];
 
             articles.forEach(({id, title, starred}) => {
                 _articles.push({
@@ -96,6 +43,8 @@ Dispatcher.register(({type, id, articles, content, title}) => {
                     starred: starred ? true : false
                 });
             });
+
+            _lastPullTime = lastPullTime;
 
             articleStore.onChangeSignal.dispatch();
         break;
@@ -126,8 +75,6 @@ Dispatcher.register(({type, id, articles, content, title}) => {
                 }
             });
 
-            articleStore.save({ updateLastPullTime: false });
-
             articleStore.onChangeSignal.dispatch();
         break;
         case 'ARTICLE_UNSTAR':
@@ -136,8 +83,6 @@ Dispatcher.register(({type, id, articles, content, title}) => {
                     a.starred = false;
                 }
             });
-
-            articleStore.save({ updateLastPullTime: false });
 
             articleStore.onChangeSignal.dispatch();
         break;
